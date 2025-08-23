@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NuxtLink } from '#components';
+import { AppThemeToggle, NuxtLink } from '#components';
 </script>
 
 <template>
@@ -10,6 +10,7 @@ import { NuxtLink } from '#components';
       </NuxtLink>
     </div>
     <div class="navbar-end">
+      <AppThemeToggle />
       <a class="btn btn-accent">Sign In with Github
         <Icon name="tabler:brand-github" size="24" />
       </a>
