@@ -8,6 +8,7 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxtjs/color-mode',
   ],
+
   eslint: {
     config: {
       standalone: false, // <---
@@ -22,4 +23,5 @@ export default defineNuxtConfig({
   colorMode: {
     dataValue: 'theme',
   },
+
 });
