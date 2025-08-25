@@ -7,7 +7,7 @@
         </h1>
         <p class="py-6">
           Keep track of your travels and adventures. Add locations, photos, and notes to
-          create a digital journal of your journeys.
+          create a digital journal of your journeys!
         </p>
         <button class="btn btn-accent">
           Sign In with Github
