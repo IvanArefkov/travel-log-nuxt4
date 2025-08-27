@@ -3,8 +3,12 @@ import { createAuthClient } from 'better-auth/client';
 import { authClient } from '~/lib/client';
 
 export const useAuthStore = defineStore('useAuthStore', () => {
-  const session = authClient.useSession();
-  const loading = computed(() => session.value.isPending || session.value.isRefetching);
+  const session = ref<Awaited<ReturnType<typeof authClient.useSession>> | null>(null);
+  async function init() {
+    const data = await authClient.useSession(useFetch);
+    session.value = data;
+  }
+  const loading = computed(() => session.value?.isPending);
 
   function signOut() {
     authClient.signOut();
@@ -18,11 +22,12 @@ export const useAuthStore = defineStore('useAuthStore', () => {
     });
   }
   const user = computed(() =>
-    session.value.data?.user,
+    session.value?.data?.user,
   );
   return {
     loading,
     user,
+    init,
     signIn,
     signOut,
   };
