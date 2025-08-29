@@ -36,6 +36,7 @@ function toggleSidebar() {
           :show-label="isSidebarOpen"
           name="tabler:map-pin-plus"
           label="Add Location"
+          link="/dashboard/add"
         />
         <div class="divider" />
         <SidecartButton
@@ -46,7 +47,9 @@ function toggleSidebar() {
         />
       </div>
     </div>
-    <div class="flex-1" />
+    <div class="flex-1">
+      <NuxtPage />
+    </div>
   </div>
 </template>
 
