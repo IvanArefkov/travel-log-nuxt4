@@ -2,17 +2,11 @@ import slugify from 'slug';
 
 import type { CustomCauseError } from '~/lib/types';
 
-import { checkSlug, existingLocationName } from '@/lib/db/queries/location';
-import db from '~/lib/db/index';
-import { InsertLocation, location } from '~/lib/db/schema';
+import { checkSlug, createNewLocation, existingLocationName } from '@/lib/db/queries/location';
+import { defineAuthenticatedEventHandler } from '@/utils/define-authenticated-user';
+import { InsertLocation } from '~/lib/db/schema';
 
-export default defineEventHandler(async (event) => {
-  if (!event.context.user) {
-    return sendError(event, createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized',
-    }));
-  }
+export default defineAuthenticatedEventHandler(async (event) => {
   const result = await readValidatedBody(event, InsertLocation.safeParse);
 
   // If validation errors
@@ -51,12 +45,7 @@ export default defineEventHandler(async (event) => {
   const slug = await checkSlug(slugify(result.data.name));
 
   try {
-    const [created] = await db.insert(location).values({
-      ...result.data,
-      userId: event.context.user.id,
-      slug,
-    }).returning();
-    return created;
+    return await createNewLocation(result.data, event.context.user.id, slug);
   }
 
   catch (e) {
