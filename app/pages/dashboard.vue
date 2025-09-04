@@ -1,8 +1,16 @@
 <script setup lang="ts">
+import { useSidebarStore } from '#imports';
+
 import SidecartButton from '~/components/sidecart-button.vue';
 
+const locationStore = useLocationStore();
+const route = useRoute();
+
+const SidebarStore = useSidebarStore();
 const isSidebarOpen = ref(true);
 onMounted(() => {
+  if (route.path !== '/dashboard')
+    locationStore.refresh();
   isSidebarOpen.value = localStorage.getItem('sideCartState') === 'true';
 });
 
@@ -38,6 +46,22 @@ function toggleSidebar() {
           label="Add Location"
           link="/dashboard/add"
         />
+        <ClientOnly>
+          <div v-if="SidebarStore.sidebarItems.length || SidebarStore.loading" class="divider" />
+          <div v-if="SidebarStore.loading" class="px-4">
+            <div class="skeleton h-4 w-full" />
+          </div>
+          <div v-if="!SidebarStore.loading && SidebarStore.sidebarItems.length">
+            <SidecartButton
+              v-for="item in SidebarStore.sidebarItems"
+              :key="item.id"
+              :show-label="isSidebarOpen"
+              :name="item.icon"
+              :label="item.label"
+              :link="item.href"
+            />
+          </div>
+        </ClientOnly>
         <div class="divider" />
         <SidecartButton
           :show-label="isSidebarOpen"

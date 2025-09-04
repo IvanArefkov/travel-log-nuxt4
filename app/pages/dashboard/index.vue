@@ -1,9 +1,9 @@
 <script setup lang="ts">
-const { data, status } = await useFetch('/api/locations', {
-  lazy: true,
+const locationStore = useLocationStore();
+const { data, status } = storeToRefs(locationStore);
+onMounted(() => {
+  locationStore.refresh();
 });
-
-;
 </script>
 
 <template>
@@ -14,7 +14,7 @@ const { data, status } = await useFetch('/api/locations', {
     <div v-if="status === 'pending'">
       <span class="loading loading-spinner loading-md" />
     </div>
-    <div v-else-if="data && data.length > 0" class="flex gap-2">
+    <div v-else-if="data && data.length" class="flex gap-2">
       <div
         v-for="location in data"
         :key="location.id"
