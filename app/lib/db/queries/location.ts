@@ -28,3 +28,19 @@ export async function checkSlug(slug: string) {
   };
   return slug;
 }
+
+export async function createNewLocation(result: InsertLocation, userId: number, slug: string) {
+  const [created] = await db.insert(location).values({
+    ...result,
+    userId,
+    slug,
+  }).returning();
+  return created;
+}
+
+export async function getAllLocations(userId: number) {
+  const locations = await db.query.location.findMany({
+    where: eq(location.userId, userId),
+  });
+  return locations;
+}

@@ -25,7 +25,7 @@ const auth = useAuthStore();
       class="btn m-1"
     >
       <div v-if="auth.user.image" class="avatar">
-        <div class="w-8 rounded-full">
+        <div class="w-7 rounded-full">
           <img :src="auth.user.image" :alt="auth.user.name">
         </div>
       </div>
