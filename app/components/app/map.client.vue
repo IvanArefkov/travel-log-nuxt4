@@ -26,14 +26,29 @@ onMounted(() => {
       color="#7e42f5"
     >
       <template #marker>
-        <div class="tooltip" :data-tip="location.label">
+        <div
+          class="tooltip hover:cursor-pointer"
+          :data-tip="location.name"
+          :class="{ 'tooltip-open': mapStore.selectedPoint === location }"
+          @mouseenter="mapStore.hightlightedPoint = location"
+          @mouseleave="mapStore.hightlightedPoint = null"
+        >
           <Icon
             name="tabler:map-pin-filled"
             size="32"
-            class="text-secondary"
+            :class="{
+              'text-accent': mapStore.selectedPoint?.id === location.id,
+              'text-secondary': mapStore.selectedPoint?.id !== location.id,
+            }"
           />
         </div>
       </template>
+      <mgl-popup>
+        <h1>{{ location.name }}</h1>
+        <p v-if="location.description">
+          {{ location.description }}
+        </p>
+      </mgl-popup>
     </mgl-marker>
     <MglNavigationControl />
   </MglMap>

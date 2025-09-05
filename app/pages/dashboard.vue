@@ -5,6 +5,7 @@ import SidecartButton from '~/components/sidecart-button.vue';
 
 const locationStore = useLocationStore();
 const route = useRoute();
+const mapStore = useMapStore();
 
 const SidebarStore = useSidebarStore();
 const isSidebarOpen = ref(true);
@@ -53,12 +54,15 @@ function toggleSidebar() {
           </div>
           <div v-if="!SidebarStore.loading && SidebarStore.sidebarItems.length">
             <SidecartButton
-              v-for="item in SidebarStore.sidebarItems"
-              :key="item.id"
+              v-for="location in SidebarStore.sidebarItems"
+              :key="location.id"
               :show-label="isSidebarOpen"
-              :name="item.icon"
-              :label="item.label"
-              :link="item.href"
+              :name="location.icon"
+              :label="location.name"
+              :link="location.href"
+              :icon-color="mapStore.selectedPoint === location.location || mapStore.hightlightedPoint === location.location ? 'text-accent' : undefined"
+              @mouseenter="mapStore.selectedPoint = location.location"
+              @mouseleave="mapStore.selectedPoint = null"
             />
           </div>
         </ClientOnly>
