@@ -14,11 +14,11 @@ onMounted(() => {
     <div v-if="status === 'pending'">
       <span class="loading loading-spinner loading-md" />
     </div>
-    <div v-else-if="data && data.length" class="flex gap-2">
+    <div v-else-if="data && data.length" class="flex gap-2 overflow-auto">
       <div
         v-for="location in data"
         :key="location.id"
-        class="card bg-base-300 w-96 shadow-sm my-2"
+        class="card bg-base-300 w-96 shadow-sm my-2 shrink-0"
       >
         <div class="card-body">
           <h2 class="card-title">

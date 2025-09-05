@@ -22,7 +22,7 @@ function toggleSidebar() {
 
 <template>
   <div class="flex-1 flex">
-    <div class="bg-base-100 trasition-all duration-300" :class="{ 'w-64': isSidebarOpen, 'w-16': !isSidebarOpen }">
+    <div class="bg-base-100 trasition-all duration-300 shrink-0" :class="{ 'w-64': isSidebarOpen, 'w-16': !isSidebarOpen }">
       <div
         class="flex hover:cursor-pointer transition-all duration-200"
         :class="{ 'justify-end': isSidebarOpen, 'justify-center': !isSidebarOpen, 'rotate': !isSidebarOpen }"
@@ -71,9 +71,11 @@ function toggleSidebar() {
         />
       </div>
     </div>
-    <div class="flex-1 flex flex-col w-full">
-      <NuxtPage />
-      <AppMap class="flex-1" />
+    <div class="flex-1 overflow-auto">
+      <div class="flex flex-col size-full">
+        <NuxtPage />
+        <AppMap />
+      </div>
     </div>
   </div>
 </template>
