@@ -4,3 +4,25 @@
     light --default,
     dark --prefersdark;
 }
+
+#__nuxt {
+  .maplibregl-popup-content {
+    color: var(--color-base-200);
+    @apply dark:text-base-content dark:bg-base-200;
+  }
+  .maplibregl-popup-close-button {
+    right: 5px;
+  }
+  .maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
+    @apply dark:border-t-base-200;
+  }
+  .maplibregl-popup-anchor-right .maplibregl-popup-tip {
+    @apply dark:border-l-base-200;
+  }
+  .maplibregl-popup-anchor-left .maplibregl-popup-tip {
+    @apply dark:border-r-base-200;
+  }
+  .maplibregl-popup-anchor-top .maplibregl-popup-tip {
+    @apply dark:border-b-base-200;
+  }
+}
