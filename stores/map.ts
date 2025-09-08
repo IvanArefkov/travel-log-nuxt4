@@ -6,6 +6,7 @@ export const useMapStore = defineStore('useMapStore', () => {
   const mapPoints = ref<MapPoint[]>([]);
   const selectedPoint = ref<MapPoint | null>(null);
   const hightlightedPoint = ref<MapPoint | null>(null);
+  const addedPoint = ref<MapPoint | null>(null);
 
   function highlightMapPoint(point: MapPoint) {
     selectedPoint.value = point;
@@ -30,6 +31,8 @@ export const useMapStore = defineStore('useMapStore', () => {
       });
     });
     effect (() => {
+      if (addedPoint)
+        return;
       if (selectedPoint.value) {
         map.map?.flyTo({
           center: [selectedPoint.value.long, selectedPoint.value.lat],
@@ -54,5 +57,6 @@ export const useMapStore = defineStore('useMapStore', () => {
     hightlightedPoint,
     selectedPoint,
     highlightMapPoint,
+    addedPoint,
   };
 });
