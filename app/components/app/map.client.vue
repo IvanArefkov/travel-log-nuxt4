@@ -1,10 +1,19 @@
 <script setup lang="ts">
+import type { LngLat } from 'maplibre-gl';
+
 import { MglMap } from '@indoorequal/vue-maplibre-gl';
 
 import { CENTER_USA } from '@/lib/constants';
 
 const colorMode = useColorMode();
 const mapStore = useMapStore();
+
+function updateAddedPoint(location: LngLat) {
+  if (mapStore.addedPoint) {
+    mapStore.addedPoint.lat = location.lat;
+    mapStore.addedPoint.long = location.lng;
+  }
+}
 
 const style = computed(() => colorMode.value === 'dark' ? '/styles/dark.json' : 'https://tiles.openfreemap.org/styles/liberty');
 const zoom = 3;
@@ -20,10 +29,32 @@ onMounted(() => {
     :zoom="zoom"
   >
     <mgl-marker
+      v-if="mapStore.addedPoint"
+      :coordinates="CENTER_USA"
+      draggable
+      @update:coordinates="updateAddedPoint($event)"
+      @dragstart="console.log('dragstart')"
+      @drag="console.log('drag')"
+      @dragend="console.log('dragend')"
+    >
+      <template #marker>
+        <div
+          class="tooltip tooltip-top hover:tooltip-open"
+          data-tip="drag to your desired location"
+        >
+          <Icon
+            name="tabler:map-pin-filled"
+            size="32"
+            class="text-warning"
+          />
+        </div>
+      </template>
+    </mgl-marker>
+
+    <mgl-marker
       v-for="location in mapStore.mapPoints"
       :key="location.id"
       :coordinates="[location.long, location.lat]"
-      color="#7e42f5"
     >
       <template #marker>
         <div

@@ -3,14 +3,16 @@ import type { FetchError } from 'ofetch';
 
 import { toTypedSchema } from '@vee-validate/zod';
 
+import { CENTER_USA } from '~/lib/constants';
 import { InsertLocation } from '~/lib/db/schema';
 
 const submitError = ref();
+const mapStore = useMapStore();
 const submited = ref(false);
 const router = useRouter();
 const loading = ref(false);
 const { $csrfFetch } = useNuxtApp();
-const { handleSubmit, errors, meta, setErrors } = useForm({
+const { handleSubmit, errors, meta, setErrors, setFieldValue } = useForm({
   validationSchema: toTypedSchema(InsertLocation),
 });
 
@@ -42,13 +44,31 @@ onBeforeRouteLeave(() => {
     if (!confirm) {
       return false;
     }
+    mapStore.addedPoint = null;
     return true;
   }
+});
+
+effect(() => {
+  if (mapStore.addedPoint) {
+    setFieldValue('long', mapStore.addedPoint.long);
+    setFieldValue('lat', mapStore.addedPoint.lat);
+  }
+});
+
+onMounted(() => {
+  mapStore.addedPoint = {
+    long: CENTER_USA[0],
+    lat: CENTER_USA[1],
+    description: '',
+    name: 'added',
+    id: 1,
+  };
 });
 </script>
 
 <template>
-  <div class="container max-w-md mx-auto mt-4">
+  <div class="container max-w-md mx-auto mt-4 p-4">
     <div>
       <Alert
         v-if="submitError"
@@ -77,20 +97,12 @@ onBeforeRouteLeave(() => {
         name="description"
         :disabled="loading"
       />
-      <AppFormField
-        label="Latitude"
-        :error="errors.lat"
-        type="number"
-        name="lat"
-        :disabled="loading"
-      />
-      <AppFormField
-        label="Longitude"
-        :error="errors.long"
-        type="number"
-        name="long"
-        :disabled="loading"
-      />
+      <div>
+        <p>Drag <Icon name="tabler:map-pin-filled" class="text-warning" /> marker to your desired location</p>
+        <p class="text-gray-500">
+          <span>Latitude: {{ mapStore.addedPoint?.lat.toFixed(4) }}, Longitude: {{ mapStore.addedPoint?.long.toFixed(4) }}</span>
+        </p>
+      </div>
 
       <div class="flex justify-end gap-3 mt-4">
         <button
