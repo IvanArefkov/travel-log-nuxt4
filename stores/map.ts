@@ -43,6 +43,7 @@ export const useMapStore = defineStore('useMapStore', () => {
       }, new LngLatBounds([firstPoint.long, firstPoint.lat], [firstPoint.long, firstPoint.lat]));
       map.map?.fitBounds(bounds, {
         padding,
+        maxZoom: 10,
       });
     });
     watch(addedPoint, () => {

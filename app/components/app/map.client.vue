@@ -81,10 +81,15 @@ onMounted(() => {
         </div>
       </template>
       <mgl-popup>
-        <h1>{{ location.name }}</h1>
-        <p v-if="location.description">
-          {{ location.description }}
-        </p>
+        <div class="flex flex-col min-w-24">
+          <h1>{{ location.name }}</h1>
+          <p v-if="location.description">
+            {{ location.description }}
+          </p>
+          <NuxtLink class="link self-end" :to="{ name: 'dashboard-location-slug', params: { slug: location.slug } }">
+            View
+          </NuxtLink>
+        </div>
       </mgl-popup>
     </mgl-marker>
     <MglNavigationControl />

@@ -3,6 +3,7 @@ const props = defineProps<{
   name: string;
   label: string;
   link?: string;
+  slug?: string;
   showLabel: boolean;
   iconColor?: 'text-primary' | 'text-secondary' | 'text-accent';
 }>();
@@ -16,7 +17,8 @@ const route = useRoute();
     :data-tip="props.label"
   >
     <NuxtLink
-      :to="props.link"
+
+      :to="props.link || { name: 'dashboard-location-slug', params: { slug: props.slug } }"
       class="flex gap-2 items-center p-2 hover:bg-base-300 hover:cursor-pointer"
       :class="{ 'bg-base-200': route.path === props.link, 'justify-start': props.showLabel, 'justify-center': !props.showLabel }"
     >
