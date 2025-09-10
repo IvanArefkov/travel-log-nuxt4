@@ -32,6 +32,7 @@ export const useMapStore = defineStore('useMapStore', () => {
     let bounds: LngLatBounds | null = null;
     const padding = 60;
     const map = useMap();
+    map.map?.doubleClickZoom.disable();
 
     effect(() => {
       const firstPoint = mapPoints.value[0];
