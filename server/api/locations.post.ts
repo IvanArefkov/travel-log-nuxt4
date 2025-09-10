@@ -4,6 +4,7 @@ import type { CustomCauseError } from '~/lib/types';
 
 import { checkSlug, createNewLocation, existingLocationName } from '@/lib/db/queries/location';
 import { defineAuthenticatedEventHandler } from '@/utils/define-authenticated-user';
+import sendZodError from '@/utils/send-zod-error';
 import { InsertLocation } from '~/lib/db/schema';
 
 export default defineAuthenticatedEventHandler(async (event) => {
@@ -11,25 +12,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
 
   // If validation errors
   if (!result.success) {
-    const statusMessage = result
-      .error
-      .issues
-      .map(issue => `${issue.path.join('')}: ${issue.message}`)
-      .join('; ');
-
-    const data = result
-      .error
-      .issues
-      .reduce((errors, issue) => {
-        errors[issue.path.join('')] = issue.message;
-        return errors;
-      }, {} as Record<string, string>);
-
-    return sendError(event, createError({
-      statusCode: 422,
-      statusMessage,
-      data,
-    }));
+    return sendZodError(result.error, event);
   }
 
   //  else  find a location check if it already exists for the user

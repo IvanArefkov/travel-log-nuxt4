@@ -1,12 +1,26 @@
 import type { LngLatBounds } from 'maplibre-gl';
 
-import type { MapPoint } from '@/lib/types';
+import type { MapPoint, SearchResultType } from '@/lib/types';
 
 export const useMapStore = defineStore('useMapStore', () => {
   const mapPoints = ref<MapPoint[]>([]);
   const selectedPoint = ref<MapPoint | null>(null);
   const hightlightedPoint = ref<MapPoint | null>(null);
   const addedPoint = ref<MapPoint | null>(null);
+  const searchStore = useSearchResultStore();
+
+  const flyTo = ref<boolean>(true);
+  function selectResult(location: SearchResultType) {
+    flyTo.value = true;
+    addedPoint.value = {
+      id: 1,
+      description: '',
+      name: location.name,
+      long: Number.parseFloat(location.lon),
+      lat: Number.parseFloat(location.lat),
+    };
+    searchStore.searchTerm = '';
+  }
 
   function highlightMapPoint(point: MapPoint) {
     selectedPoint.value = point;
@@ -18,6 +32,7 @@ export const useMapStore = defineStore('useMapStore', () => {
     let bounds: LngLatBounds | null = null;
     const padding = 60;
     const map = useMap();
+    map.map?.doubleClickZoom.disable();
 
     effect(() => {
       const firstPoint = mapPoints.value[0];
@@ -30,24 +45,18 @@ export const useMapStore = defineStore('useMapStore', () => {
         padding,
       });
     });
-    effect (() => {
-      if (addedPoint)
-        return;
-      if (selectedPoint.value) {
+    watch(addedPoint, () => {
+      if (addedPoint.value && flyTo.value) {
         map.map?.flyTo({
-          center: [selectedPoint.value.long, selectedPoint.value.lat],
-          speed: 0.5,
-          curve: 1,
+          zoom: 9,
+          center: [addedPoint.value.long, addedPoint.value.lat],
           essential: true,
         });
+        flyTo.value = false;
       }
-      else if (bounds) {
-        map.map?.fitBounds(bounds, {
-          padding,
-          animate: true,
-          essential: true,
-        });
-      }
+    }, {
+      immediate: true,
+      deep: true,
     });
   }
 
@@ -58,5 +67,6 @@ export const useMapStore = defineStore('useMapStore', () => {
     selectedPoint,
     highlightMapPoint,
     addedPoint,
+    selectResult,
   };
 });

@@ -8,12 +8,15 @@ import { InsertLocation } from '~/lib/db/schema';
 
 const submitError = ref();
 const mapStore = useMapStore();
+const searchStore = useSearchResultStore();
 const submited = ref(false);
 const router = useRouter();
 const loading = ref(false);
 const { $csrfFetch } = useNuxtApp();
 const { handleSubmit, errors, meta, setErrors, setFieldValue } = useForm({
   validationSchema: toTypedSchema(InsertLocation),
+  initialValues: { long: CENTER_USA[0], lat: CENTER_USA[1], name: '', description: '',
+  },
 });
 
 const onSubmit = handleSubmit(async (values) => {
@@ -36,6 +39,9 @@ const onSubmit = handleSubmit(async (values) => {
   }
   loading.value = false;
 });
+onBeforeUnmount(() => {
+  mapStore.addedPoint = null;
+});
 
 onBeforeRouteLeave(() => {
   if (meta.value.dirty && !submited.value) {
@@ -44,7 +50,6 @@ onBeforeRouteLeave(() => {
     if (!confirm) {
       return false;
     }
-    mapStore.addedPoint = null;
     return true;
   }
 });
@@ -69,64 +74,79 @@ onMounted(() => {
 
 <template>
   <div class="container max-w-md mx-auto mt-4 p-4">
-    <div>
-      <Alert
-        v-if="submitError"
-        alert-class="alert-error"
-        :message="submitError"
-        @close="submitError = ''"
-      />
-      <h1 class="text-lg">
-        Add Location
-      </h1>
-      <p>
-        A location is a place you have traveled or will travel to. It can be a city. country, state or point of interest. You can add specific times you visited this location after adding it.
-      </p>
+    <div v-if="searchStore.searchResults && searchStore.searchTerm" class="flex flex-col">
+      <button class="self-end hover:cursor-pointer" @click="searchStore.clearSearch()">
+        <Icon
+          name="tabler:x"
+          size="24"
+          aria-hidden="false"
+        />
+      </button>
+      <SearchResults :search-results="searchStore.searchResults" :search-term="searchStore.searchTerm" />
     </div>
-    <form action="" @submit.prevent="onSubmit()">
-      <AppFormField
-        label="Name"
-        :error="errors.name"
-        name="name"
-        :disabled="loading"
-      />
-      <AppFormField
-        tag="textarea"
-        label="Description"
-        :error="errors.description"
-        name="description"
-        :disabled="loading"
-      />
+    <div v-else>
       <div>
-        <p>Drag <Icon name="tabler:map-pin-filled" class="text-warning" /> marker to your desired location</p>
-        <p class="text-gray-500">
-          <span>Latitude: {{ mapStore.addedPoint?.lat.toFixed(4) }}, Longitude: {{ mapStore.addedPoint?.long.toFixed(4) }}</span>
+        <Alert
+          v-if="submitError"
+          alert-class="alert-error"
+          :message="submitError"
+          @close="submitError = ''"
+        />
+        <h1 class="text-lg">
+          Add Location
+        </h1>
+        <p>
+          A location is a place you have traveled or will travel to. It can be a city. country, state or point of interest. You can add specific times you visited this location after adding it.
         </p>
       </div>
-
-      <div class="flex justify-end gap-3 mt-4">
-        <button
+      <form action="" @submit.prevent="onSubmit()">
+        <AppFormField
+          label="Name"
+          :error="errors.name"
+          name="name"
           :disabled="loading"
-          type="button"
-          class="btn btn-outline"
-          @click="router.back()"
-        >
-          Cancel <Icon name="tabler:arrow-back" size="16" />
-        </button>
-
-        <button
-          class="btn btn-primary"
-          type="submit"
+        />
+        <AppFormField
+          tag="textarea"
+          label="Description"
+          :error="errors.description"
+          name="description"
           :disabled="loading"
-        >
-          Add <Icon
-            v-if="!loading"
-            name="tabler:plus"
-            size="18"
-          />
-          <span v-if="loading" class="loading loading-spinner loading-md" />
-        </button>
-      </div>
-    </form>
+        />
+        <div>
+          <p>Drag <Icon name="tabler:map-pin-filled" class="text-warning" /> marker to your desired location</p>
+          <p>or double-click on the map.</p>
+          <p class="text-gray-500">
+            <span>Latitude: {{ mapStore.addedPoint?.lat.toFixed(4) }}, Longitude: {{ mapStore.addedPoint?.long.toFixed(4) }}</span>
+          </p>
+        </div>
+
+        <LocationSearch />
+
+        <div class="flex justify-end gap-3 mt-4">
+          <button
+            :disabled="loading"
+            type="button"
+            class="btn btn-outline"
+            @click="router.back()"
+          >
+            Cancel <Icon name="tabler:arrow-back" size="16" />
+          </button>
+
+          <button
+            class="btn btn-primary"
+            type="submit"
+            :disabled="loading"
+          >
+            Add <Icon
+              v-if="!loading"
+              name="tabler:plus"
+              size="18"
+            />
+            <span v-if="loading" class="loading loading-spinner loading-md" />
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
