@@ -44,3 +44,13 @@ export async function getAllLocations(userId: number) {
   });
   return locations;
 }
+
+export async function getLocation(slug: string, userId: number) {
+  const FoundLocation = await db.query.location.findFirst({
+    where: and(eq(location?.slug, slug), eq(location.userId, userId)),
+    with: {
+      locationLogs: true,
+    },
+  });
+  return FoundLocation;
+}

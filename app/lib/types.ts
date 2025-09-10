@@ -29,6 +29,7 @@ export type MapPoint = {
   id: number;
   description: string | null;
   name: string;
+  slug?: string;
 } & LatLongItem; ;
 
 export type SearchResultType = {

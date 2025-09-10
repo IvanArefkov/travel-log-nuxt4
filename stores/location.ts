@@ -12,7 +12,7 @@ export const useLocationStore = defineStore('useLocationStore', () => {
         id: `location-${location.id}`,
         name: location.name,
         icon: 'tabler:map-pin-filled',
-        href: '#',
+        href: location.slug,
         location,
       }));
       mapStore.mapPoints = data.value;

@@ -59,7 +59,7 @@ function toggleSidebar() {
               :show-label="isSidebarOpen"
               :name="location.icon"
               :label="location.name"
-              :link="location.href"
+              :slug="location.href"
               :icon-color="mapStore.selectedPoint === location.location || mapStore.hightlightedPoint === location.location ? 'text-accent' : undefined"
               @mouseenter="mapStore.selectedPoint = location.location"
               @mouseleave="mapStore.selectedPoint = null"

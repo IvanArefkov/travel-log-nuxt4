@@ -8,7 +8,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="m-4">
+  <div class="m-4 min-h-64">
     <h1 class="text-2xl">
       Locations
     </h1>
@@ -16,9 +16,10 @@ onMounted(() => {
       <span class="loading loading-spinner loading-md" />
     </div>
     <div v-else-if="data && data.length" class="flex gap-2 overflow-auto">
-      <div
+      <NuxtLink
         v-for="location in data"
         :key="location.id"
+        :to="{ name: 'dashboard-location-slug', params: { slug: location.slug } }"
         class="card bg-base-300 w-96 shadow-sm my-2 shrink-0 border-2"
         :class="{ 'border-accent': mapStore.selectedPoint?.id === location.id || mapStore.hightlightedPoint?.id === location.id,
                   'border-transparent': mapStore.selectedPoint?.id !== location.id && mapStore.hightlightedPoint?.id !== location.id,
@@ -37,7 +38,7 @@ onMounted(() => {
             </button>
           </div>
         </div>
-      </div>
+      </NuxtLink>
     </div>
     <div v-else>
       <div class="mt-4">
