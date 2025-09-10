@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { MglEvent } from '@indoorequal/vue-maplibre-gl';
 import type { LngLat } from 'maplibre-gl';
 
 import { MglMap } from '@indoorequal/vue-maplibre-gl';
@@ -8,6 +9,12 @@ import { CENTER_USA } from '@/lib/constants';
 const colorMode = useColorMode();
 const mapStore = useMapStore();
 
+function setMarkerDblClick(event: MglEvent<'dblclick'>) {
+  if (mapStore.addedPoint) {
+    mapStore.addedPoint.long = event.event.lngLat.lng;
+    mapStore.addedPoint.lat = event.event.lngLat.lat;
+  }
+}
 function updateAddedPoint(location: LngLat) {
   if (mapStore.addedPoint) {
     mapStore.addedPoint.lat = location.lat;
@@ -24,22 +31,21 @@ onMounted(() => {
 
 <template>
   <MglMap
+
     :map-style="style"
     :center="CENTER_USA"
     :zoom="zoom"
+    @map:dblclick="setMarkerDblClick($event)"
   >
     <mgl-marker
       v-if="mapStore.addedPoint"
-      :coordinates="CENTER_USA"
+      :coordinates="[mapStore.addedPoint.long, mapStore.addedPoint.lat]"
       draggable
       @update:coordinates="updateAddedPoint($event)"
-      @dragstart="console.log('dragstart')"
-      @drag="console.log('drag')"
-      @dragend="console.log('dragend')"
     >
       <template #marker>
         <div
-          class="tooltip tooltip-top hover:tooltip-open"
+          class="tooltip tooltip-top tooltip-open"
           data-tip="drag to your desired location"
         >
           <Icon
